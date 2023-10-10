@@ -1,21 +1,21 @@
-//
-//  ContentView.swift
-//  RandomImages
-//
-//  Created by Gabriel Moreira on 10/10/23.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var imageListVM = ImageListViewModel()
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        List(imageListVM.randomImages) { randomImage in
+            HStack {
+                randomImage.image.map {
+                    Image(uiImage: $0)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                }
+                Text(randomImage.quote)
+            }
+        }.task {
+            await imageListVM.getRandomImages(ids: Array(1...20))
         }
-        .padding()
     }
 }
 
